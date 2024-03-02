@@ -7,6 +7,8 @@ import com.jp.testesMockito.service.exceptions.ObjectNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -20,5 +22,9 @@ public class UserServiceImpl implements UserService {
         );
     }
 
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
 
 }

@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -24,4 +27,13 @@ public class UserController {
         User user = userService.findById(id);
         return ResponseEntity.ok().body(userMapper.toDTO(user));
     }
+
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> findByAll(){
+        return ResponseEntity.ok(userService.findAll()
+                .stream()
+                .map(userMapper::toDTO)
+                .collect(Collectors.toList()));
+    }
+
 }
