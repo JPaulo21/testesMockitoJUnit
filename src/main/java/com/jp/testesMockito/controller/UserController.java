@@ -1,6 +1,8 @@
 package com.jp.testesMockito.controller;
 
 import com.jp.testesMockito.domain.User;
+import com.jp.testesMockito.domain.dto.UserDTO;
+import com.jp.testesMockito.mapper.UserMapper;
 import com.jp.testesMockito.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final UserMapper userMapper;
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Integer id){
+    public ResponseEntity<UserDTO> findById(@PathVariable Integer id){
         User user = userService.findById(id);
-        return ResponseEntity.ok().body(user);
+        return ResponseEntity.ok().body(userMapper.toDTO(user));
     }
 }
