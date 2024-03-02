@@ -1,6 +1,7 @@
 package com.jp.testesMockito.services.Impl;
 
 import com.jp.testesMockito.domain.User;
+import com.jp.testesMockito.domain.dto.UserDTO;
 import com.jp.testesMockito.repositories.UserRepository;
 import com.jp.testesMockito.services.UserService;
 import com.jp.testesMockito.services.exceptions.DataIntegratyViolationException;
@@ -31,12 +32,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
-        findByEmail(user);
+        findByEmail(user.getEmail());
         return userRepository.save(user);
     }
 
-    private void findByEmail(User user){
-        Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
+    @Override
+    public User update(Integer id, UserDTO userDTO) {
+        User user = findById(id);
+        findByEmail(userDTO.email());
+        user.setName(userDTO.name() == null ? user.getName() : userDTO.name());
+        user.setEmail(userDTO.email() == null ? user.getEmail() : userDTO.email());
+        user.setPassword(userDTO.password() == null ? user.getPassword() : userDTO.password());
+        return userRepository.save(user);
+    }
+
+    private void findByEmail(String email){
+        Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()){
             throw new DataIntegratyViolationException("Email já cadastrado");
         }
