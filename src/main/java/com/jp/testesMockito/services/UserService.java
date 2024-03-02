@@ -1,7 +1,6 @@
-package com.jp.testesMockito.service;
+package com.jp.testesMockito.services;
 
 import com.jp.testesMockito.domain.User;
-import com.jp.testesMockito.domain.dto.UserDTO;
 
 import java.util.List;
 

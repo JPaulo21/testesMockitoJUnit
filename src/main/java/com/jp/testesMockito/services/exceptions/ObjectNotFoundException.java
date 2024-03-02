@@ -1,4 +1,4 @@
-package com.jp.testesMockito.service.exceptions;
+package com.jp.testesMockito.services.exceptions;
 
 public class ObjectNotFoundException extends RuntimeException{
 

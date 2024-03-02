@@ -1,9 +1,9 @@
-package com.jp.testesMockito.service.Impl;
+package com.jp.testesMockito.services.Impl;
 
 import com.jp.testesMockito.domain.User;
 import com.jp.testesMockito.repositories.UserRepository;
-import com.jp.testesMockito.service.UserService;
-import com.jp.testesMockito.service.exceptions.ObjectNotFoundException;
+import com.jp.testesMockito.services.UserService;
+import com.jp.testesMockito.services.exceptions.ObjectNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

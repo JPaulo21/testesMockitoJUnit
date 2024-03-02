@@ -1,6 +1,5 @@
 package com.jp.testesMockito.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record UserDTO(

@@ -1,6 +1,6 @@
 package com.jp.testesMockito.controller.exceptions;
 
-import com.jp.testesMockito.service.exceptions.ObjectNotFoundException;
+import com.jp.testesMockito.services.exceptions.ObjectNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -3,7 +3,7 @@ package com.jp.testesMockito.controller;
 import com.jp.testesMockito.domain.User;
 import com.jp.testesMockito.domain.dto.UserDTO;
 import com.jp.testesMockito.mapper.UserMapper;
-import com.jp.testesMockito.service.UserService;
+import com.jp.testesMockito.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity create(@RequestBody UserDTO userDTO, UriComponentsBuilder ucb){
+    public ResponseEntity<Void> create(@RequestBody UserDTO userDTO, UriComponentsBuilder ucb){
         User user = userService.create(userMapper.toUser(userDTO));
         URI location = ucb
                 .path("/api/v1/users/{id}")
