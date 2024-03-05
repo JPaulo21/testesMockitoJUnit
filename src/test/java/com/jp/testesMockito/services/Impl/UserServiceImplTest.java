@@ -4,6 +4,7 @@ import com.jp.testesMockito.domain.User;
 import com.jp.testesMockito.domain.dto.UserDTO;
 import com.jp.testesMockito.mapper.UserMapper;
 import com.jp.testesMockito.repositories.UserRepository;
+import com.jp.testesMockito.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UserServiceImplTest {
@@ -23,6 +25,7 @@ class UserServiceImplTest {
     public static final String NAME     = "Joao";
     public static final String EMAIL    = "joao@gmail.com";
     public static final String PASSWORD = "123";
+    public static final String USUARIO_NAO_ENCONTRADO = "Usuário não encontrado";
 
     @InjectMocks // Irá receber as classes Mockadas,
     private UserServiceImpl userService;
@@ -44,10 +47,10 @@ class UserServiceImplTest {
 
 
     @Test
-    @DisplayName("When findById then return An UserInstance")
+    @DisplayName("When findById then return an UserInstance")
     void whenfindById_ThenReturnAnUserInstance() {
         //Mockando o método findById do repository, ao ser chamado pelo service, retornará o objeto optionalUser desta classe de teste
-        Mockito.when(userRepository.findById(Mockito.anyInt())).thenReturn(optionalUser);
+        when(userRepository.findById(Mockito.anyInt())).thenReturn(optionalUser);
 
         User userResponse = userService.findById(ID);
 
@@ -57,6 +60,20 @@ class UserServiceImplTest {
         assertEquals(ID, userResponse.getId());
         assertEquals(NAME, userResponse.getName());
         assertEquals(EMAIL, userResponse.getEmail());
+    }
+
+    @Test
+    @DisplayName("When findById then return an ObjectNotFoundException")
+    void whenFindByIdThenReturnAnObjectNotFoundException(){
+       when(userRepository.findById(anyInt()))
+               .thenThrow(new ObjectNotFoundException(USUARIO_NAO_ENCONTRADO));
+
+       try {
+           userService.findById(ID);
+       } catch (Exception ex){
+           assertEquals(ObjectNotFoundException.class, ex.getClass());
+           assertEquals(USUARIO_NAO_ENCONTRADO, ex.getMessage());
+       }
     }
 
     @Test
