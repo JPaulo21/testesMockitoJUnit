@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -76,8 +77,26 @@ class UserServiceImplTest {
        }
     }
 
+    @Test()
+    @DisplayName("When findById then return ObjectNotFoundException")
+    void whenFindByIdThenReturnObjectNotFoundException(){
+        when(userRepository.findById(anyInt()))
+                .thenThrow(new ObjectNotFoundException(USUARIO_NAO_ENCONTRADO));
+
+        ObjectNotFoundException ex = assertThrows(ObjectNotFoundException.class, () -> userService.findById(ID));
+        assertEquals(ObjectNotFoundException.class, ex.getClass());
+        assertEquals(USUARIO_NAO_ENCONTRADO, ex.getMessage());
+    }
+
     @Test
-    void findAll() {
+    void whenFindAllthenReturnAnListoUfsers() {
+        when(userRepository.findAll()).thenReturn(List.of(user));
+
+        List<User> listUsers = userService.findAll();
+
+        assertNotNull(listUsers);
+        assertEquals(1, listUsers.size());
+        assertEquals(User.class, listUsers.get(0).getClass());
     }
 
     @Test
