@@ -4,6 +4,7 @@ import com.jp.testesMockito.domain.User;
 import com.jp.testesMockito.domain.dto.UserDTO;
 import com.jp.testesMockito.mapper.UserMapper;
 import com.jp.testesMockito.repositories.UserRepository;
+import com.jp.testesMockito.services.exceptions.DataIntegratyViolationException;
 import com.jp.testesMockito.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 class UserServiceImplTest {
 
-    public static final Integer ID = 1;
+    public static final Integer ID      = 1;
     public static final String NAME     = "Joao";
     public static final String EMAIL    = "joao@gmail.com";
     public static final String PASSWORD = "123";
@@ -110,6 +111,44 @@ class UserServiceImplTest {
         assertEquals(ID, userResponse.getId());
         assertEquals(NAME, userResponse.getName());
         assertEquals(EMAIL, userResponse.getEmail());
+    }
+
+    @Test
+    @DisplayName("When Create User with e-mail already registered")
+    void whenCreateThenReturnDataIntegratyViolationException(){
+        when(userRepository.findByEmail(anyString())).thenThrow(new DataIntegratyViolationException("Email já cadastrado"));
+
+        DataIntegratyViolationException ex = assertThrows(DataIntegratyViolationException.class, () -> userService.create(user));
+
+        assertNotNull(ex);
+        assertEquals(DataIntegratyViolationException.class, ex.getClass());
+        assertEquals(ex.getMessage(), "Email já cadastrado");
+    }
+
+    @Test
+    @DisplayName("When creating a user check if there is another user with the same email throw exception")
+    void WhenCreateUserCheckIfThereIsAnotherUserWithTheSameEmailThrowException(){
+        when(userRepository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        DataIntegratyViolationException ex = assertThrows(DataIntegratyViolationException.class, () -> userService.create(user));
+
+        assertNotNull(ex);
+        assertEquals(DataIntegratyViolationException.class, ex.getClass());
+        assertEquals(ex.getMessage(), "Email já cadastrado");
+    }
+
+    @Test
+    @DisplayName("When Create User with e-mail already registered - 3")
+    void whenCreateThenReturnDataIntegratyViolationException3(){
+        when(userRepository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        try {
+            userService.create(user);
+        } catch (DataIntegratyViolationException ex) {
+            assertNotNull(ex);
+            assertEquals(DataIntegratyViolationException.class, ex.getClass());
+            assertEquals(ex.getMessage(), "Email já cadastrado");
+        }
     }
 
     @Test
