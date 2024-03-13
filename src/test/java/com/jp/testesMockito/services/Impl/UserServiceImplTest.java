@@ -152,7 +152,42 @@ class UserServiceImplTest {
     }
 
     @Test
-    void update() {
+    void updateUser() {
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.findById(anyInt())).thenReturn(optionalUser);
+
+        User userResponse = userService.update(ID, userDTO);
+
+        assertNotNull(userResponse);
+        assertEquals(User.class, userResponse.getClass());
+        assertEquals(ID, userResponse.getId());
+        assertEquals(NAME, userResponse.getName());
+        assertEquals(EMAIL, userResponse.getEmail());
+    }
+
+    @Test
+    @DisplayName("When update a user check if there is another user with the same email throw exception")
+    void WhenUpdateUserCheckIfThereIsAnotherUserWithTheSameEmailThrowException(){
+        when(userRepository.findById(anyInt())).thenReturn(optionalUser);
+        when(userRepository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        DataIntegratyViolationException ex = assertThrows(DataIntegratyViolationException.class, () -> userService.update(ID, userDTO));
+
+        assertNotNull(ex);
+        assertEquals(DataIntegratyViolationException.class, ex.getClass());
+        assertEquals(ex.getMessage(), "Email já cadastrado");
+    }
+
+    @Test
+    @DisplayName("When update user, but there isn't user with ID")
+    void WhenUpdateUserButThereIsNotUserWithID(){
+        when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException(USUARIO_NAO_ENCONTRADO));
+
+        ObjectNotFoundException ex = assertThrows(ObjectNotFoundException.class, () -> userService.update(ID, userDTO));
+
+        assertNotNull(ex);
+        assertEquals(ObjectNotFoundException.class, ex.getClass());
+        assertEquals(ex.getMessage(), USUARIO_NAO_ENCONTRADO);
     }
 
     @Test
