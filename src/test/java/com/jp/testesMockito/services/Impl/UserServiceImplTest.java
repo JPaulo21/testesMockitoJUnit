@@ -100,7 +100,16 @@ class UserServiceImplTest {
     }
 
     @Test
-    void create() {
+    void whenCreateThenReturnSucess() {
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        User userResponse = userService.create(user);
+
+        assertNotNull(userResponse);
+        assertEquals(User.class, userResponse.getClass());
+        assertEquals(ID, userResponse.getId());
+        assertEquals(NAME, userResponse.getName());
+        assertEquals(EMAIL, userResponse.getEmail());
     }
 
     @Test
