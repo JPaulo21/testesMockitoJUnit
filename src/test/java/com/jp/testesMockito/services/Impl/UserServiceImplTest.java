@@ -187,7 +187,7 @@ class UserServiceImplTest {
 
         assertNotNull(ex);
         assertEquals(ObjectNotFoundException.class, ex.getClass());
-        assertEquals(ex.getMessage(), USUARIO_NAO_ENCONTRADO);
+        assertEquals(USUARIO_NAO_ENCONTRADO, ex.getMessage());
     }
 
     @Test
@@ -198,6 +198,16 @@ class UserServiceImplTest {
         userService.delete(ID);
 
         verify(userRepository, times(1)).deleteById(anyInt());
+    }
+
+    @Test
+    void deleteUserThrowObjectNotFoundException() {
+        when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException(USUARIO_NAO_ENCONTRADO));
+
+        ObjectNotFoundException ex = assertThrows(ObjectNotFoundException.class, () -> userService.delete(ID));
+
+        assertEquals(ObjectNotFoundException.class, ex.getClass());
+        assertEquals(USUARIO_NAO_ENCONTRADO, ex.getMessage());
     }
 
     private void startUser(){
