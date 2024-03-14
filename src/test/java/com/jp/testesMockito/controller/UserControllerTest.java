@@ -10,10 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class UserControllerTest {
@@ -41,7 +45,20 @@ class UserControllerTest {
     }
 
     @Test
-    void findById() {
+    void whenFindByIdThenReturnSucess() {
+        when(userService.findById(anyInt())).thenReturn(user);
+        when(userMapper.toDTO(any())).thenReturn(userDTO);
+
+        ResponseEntity<UserDTO> userResponse = userController.findById(ID);
+
+        assertNotNull(userResponse);
+        assertNotNull(userResponse.getBody());
+        assertEquals(ResponseEntity.class, userResponse.getClass());
+        assertEquals(UserDTO.class, userResponse.getBody().getClass());
+        assertEquals(ID, userResponse.getBody().id());
+        assertEquals(NAME, userResponse.getBody().name());
+        assertEquals(EMAIL, userResponse.getBody().email());
+        assertEquals(PASSWORD, userResponse.getBody().password());
     }
 
     @Test
