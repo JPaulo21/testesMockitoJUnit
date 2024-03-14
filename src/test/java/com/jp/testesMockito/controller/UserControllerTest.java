@@ -4,22 +4,26 @@ import com.jp.testesMockito.domain.User;
 import com.jp.testesMockito.domain.dto.UserDTO;
 import com.jp.testesMockito.mapper.UserMapper;
 import com.jp.testesMockito.services.Impl.UserServiceImpl;
-import com.jp.testesMockito.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Optional;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@DisplayName("Tests in the layer UserController")
 class UserControllerTest {
 
     public static final Integer ID      = 1;
@@ -35,6 +39,9 @@ class UserControllerTest {
 
     @Mock
     private UserMapper userMapper;
+
+    @Mock
+    private UriComponentsBuilder ucb;
 
     private UserDTO userDTO;
     private User user;
@@ -62,11 +69,34 @@ class UserControllerTest {
     }
 
     @Test
-    void findByAll() {
+    void whenFindByAllThenReturnAListOfUserDTO() {
+        when(userService.findAll()).thenReturn(List.of(user));
+        when(userMapper.toDTO(any())).thenReturn(userDTO);
+
+        ResponseEntity<List<UserDTO>> listUsersResponse = userController.findByAll();
+
+        assertNotNull(listUsersResponse);
+        assertNotNull(listUsersResponse.getBody());
+        assertEquals(HttpStatus.OK, listUsersResponse.getStatusCode());
+        assertEquals(1, listUsersResponse.getBody().size());
+        assertEquals(ArrayList.class, listUsersResponse.getBody().getClass());
+        assertEquals(UserDTO.class, listUsersResponse.getBody().get(0).getClass());
+        assertEquals(ID, listUsersResponse.getBody().get(0).id());
     }
 
     @Test
-    void create() {
+    void whenCreateThenReturnCreated() {
+        URI location = URI.create("/api/v1/users/1");
+        when(userMapper.toUser(any())).thenReturn(user);
+        when(userService.create(any(User.class))).thenReturn(user);
+        when(ucb.path(anyString())).thenReturn(ucb);
+        when(ucb.buildAndExpand(user.getId()))
+                .thenReturn(UriComponentsBuilder.fromUri(location).build());
+
+        ResponseEntity<Void> userResponse = userController.create(userDTO, ucb);
+
+        assertEquals(HttpStatus.CREATED, userResponse.getStatusCode());
+        assertNotNull(userResponse.getHeaders().getLocation());
     }
 
     @Test
