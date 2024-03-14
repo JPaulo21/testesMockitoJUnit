@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@DisplayName("Test in the service layer of entity users")
 class UserServiceImplTest {
 
     public static final Integer ID      = 1;
@@ -90,6 +91,15 @@ class UserServiceImplTest {
     }
 
     @Test
+    void testFindUserByIdNotFound() {
+        when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(ObjectNotFoundException.class, () -> {
+            userService.findById(ID);
+        });
+    }
+
+    @Test
     void whenFindAllthenReturnAnListoUfsers() {
         when(userRepository.findAll()).thenReturn(List.of(user));
 
@@ -104,7 +114,9 @@ class UserServiceImplTest {
     void whenCreateThenReturnSucess() {
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User userResponse = userService.create(user);
+        User userResponse = userService.create(new User());
+
+        assertSame(user, userResponse);
 
         assertNotNull(userResponse);
         assertEquals(User.class, userResponse.getClass());
