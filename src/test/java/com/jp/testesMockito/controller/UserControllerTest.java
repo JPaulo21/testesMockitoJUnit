@@ -20,7 +20,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @DisplayName("Tests in the layer UserController")
@@ -100,11 +100,27 @@ class UserControllerTest {
     }
 
     @Test
-    void update() {
+    void whenUpdateUserWithSucess() {
+        when(userService.update(anyInt(), any(UserDTO.class))).thenReturn(user);
+        when(userMapper.toDTO(any(User.class))).thenReturn(userDTO);
+
+        ResponseEntity<UserDTO> userDTOResponse = userController.update(ID, userDTO);
+
+        assertNotNull(userDTOResponse);
+        assertNotNull(userDTOResponse.getBody());
+        assertEquals(HttpStatus.OK, userDTOResponse.getStatusCode());
+        assertEquals(UserDTO.class, userDTOResponse.getBody().getClass());
     }
 
     @Test
-    void delete() {
+    void whenDeleteThenReturnSucess() {
+        doNothing().when(userService).delete(anyInt());
+
+        ResponseEntity<Void> userDTOResponse = userController.delete(ID);
+
+        assertNotNull(userDTOResponse);
+        assertEquals(HttpStatus.NO_CONTENT, userDTOResponse.getStatusCode());
+        verify(userService, times(1)).delete(anyInt());
     }
 
     private void startUser(){
