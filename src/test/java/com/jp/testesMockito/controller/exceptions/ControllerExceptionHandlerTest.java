@@ -1,5 +1,6 @@
 package com.jp.testesMockito.controller.exceptions;
 
+import com.jp.testesMockito.services.exceptions.DataIntegratyViolationException;
 import com.jp.testesMockito.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
+import com.jp.testesMockito.controller.exceptions.StandardError;
+
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,7 +30,7 @@ class ControllerExceptionHandlerTest {
     }
 
     @Test
-    void whenObjectNotFoundExceptionThenReturnAResponseEtity() {
+    void whenObjectNotFoundExceptionThenReturnAResponseEntity() {
         ResponseEntity<StandardError> exceptionResponse = exceptionHandler
                 .objectNotFound(
                         new ObjectNotFoundException(USUARIO_NAO_ENCONTRADO),
@@ -42,5 +46,18 @@ class ControllerExceptionHandlerTest {
 
     @Test
     void dataIntegratyViolationException() {
+        ResponseEntity<StandardError> exceptionResponse = exceptionHandler
+                .dataIntegratyViolationException(
+                        new DataIntegratyViolationException("Email já cadastrado"),
+                        new MockHttpServletRequest());
+
+        assertNotNull(exceptionResponse);
+        assertNotNull(exceptionResponse.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, exceptionResponse.getStatusCode());
+        assertEquals(StandardError.class, exceptionResponse.getBody().getClass());
+        assertEquals("Email já cadastrado", exceptionResponse.getBody().error());
+        assertEquals(400, exceptionResponse.getBody().status());
+        assertNotEquals(LocalDateTime.now(), exceptionResponse.getBody().timestamp());
+        assertNotEquals("/users/2", exceptionResponse.getBody().path());
     }
 }

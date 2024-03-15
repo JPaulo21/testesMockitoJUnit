@@ -122,6 +122,7 @@ class UserServiceImplTest {
         assertEquals(User.class, userResponse.getClass());
         assertEquals(ID, userResponse.getId());
         assertEquals(NAME, userResponse.getName());
+        assertEquals(PASSWORD, userResponse.getPassword());
         assertEquals(EMAIL, userResponse.getEmail());
     }
 
